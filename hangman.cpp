@@ -2,6 +2,7 @@
 #include <ctime>
 #include <cstdlib>
 #include <fstream>
+#include <windows.h>
 
 using namespace std;
 
@@ -30,52 +31,74 @@ class words{
 		}
 		void play_game()
 		{
-			char letter,game_word[word.length()], wrong[8];
-			int i=0;
-			for(int i=0; i<word.length(); i++)
-			game_word[i]='_';
+			char letter, letters_and_blanks[word.length()], wrong_guesses[8];
+			int wrong_attempts=0;
+			bool complete=false;
+			for(int j=0; j<word.length(); j++)
+			letters_and_blanks[j]='_';
+			cout<<word;
+			Sleep(2000);
 			while(1)
 			{
-				display_hangman(i,game_word,wrong);
+				display_hangman(wrong_attempts,letters_and_blanks,wrong_guesses);
 				cout<<endl<<endl<<"Enter letter: ";
 				cin>>letter;
-				for(int j=0; word[j]!='\0'; j++)
+				for(int j=0; j<word.length(); j++)
 				{
-					if(word[j]==letter)
-					game_word[j]=letter;
-				}
-				for(int j=0; game_word[j]!='\0'; j++)
-				{
-					if(game_word[j]=='_')
+					if(word[j]==toupper(letter))
 					{
-						i++;
-						continue;
+						letters_and_blanks[j]=toupper(letter);
 					}
 					else
 					{
-						cout<<endl<<endl<<"CORRECT!\n\nYou Win";
+						continue;
+						if(j==word.length())
+						{
+							wrong_guesses[wrong_attempts]=letter;
+							wrong_attempts++;
+							break;
+						}
+					}
+				}
+				for(int j=0; j<word.length(); j++)
+				{
+					if(letters_and_blanks[j]=='_')
+					{
+						complete=false;
 						break;
 					}
+					else
+					{
+						complete=true;
+					}
+				}
+				if(!complete)
+				continue;
+				else
+				{
+					cout<<endl<<endl<<"CORRECT!\n\nYou Win";
+					break;
 				}
 			}
 		}
-		void display_hangman(int n, string combo, char c[])
+		void display_hangman(int w_a, string combo, char w_g[])
 		{
-			if (n==0)
+			if (w_a==0)
 			{
+				system("cls");
 				cout<<"\n\n\n\n\n\n\n\n\n\n";
 				cout<<combo;
-				cout<<endl<<"Invalid letters: ";
+				cout<<endl<<endl<<"Invalid letters: ";
 			}
-			else if (n==1)
+			else if (w_a==1)
 			{
 				system("cls");
 				cout<<"=========="<<endl;
 		    	cout<<"\n\n\n\n\n\n\n\n\n";
 				cout<<combo;
-				cout<<endl<<"Invalid letters: "<<c[0];
+				cout<<endl<<endl<<"Invalid letters: "<<w_g[0];
 			}
-			else if (n==2)
+			else if (w_a==2)
 			{
 				system("cls");
 				cout<<"=========="<<endl;
@@ -83,9 +106,9 @@ class words{
 		    	cout<<"    |"<<endl;
 		    	cout<<"\n\n\n\n\n\n\n";
 				cout<<combo;
-				cout<<endl<<"Invalid letters: "<<c[0]<<" "<<c[1];
+				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1];
 			}
-			else if (n==3)
+			else if (w_a==3)
 			{
 				system("cls");
 				cout<<"=========="<<endl;
@@ -94,9 +117,9 @@ class words{
 				cout<<"    O"<<endl;
 		    	cout<<"\n\n\n\n\n\n";
 				cout<<combo;
-				cout<<endl<<"Invalid letters: "<<c[0]<<" "<<c[1]<<" "<<c[2];
+				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1]<<" "<<w_g[2];
 			}
-		    else if (n==4)
+		    else if (w_a==4)
 		    {
 		    	system("cls");
 				cout<<"=========="<<endl;
@@ -107,9 +130,9 @@ class words{
 				cout<<"    |";
 		    	cout<<"\n\n\n\n";
 				cout<<combo;
-				cout<<endl<<"Invalid letters: "<<c[0]<<" "<<c[1]<<" "<<c[2]<<" "<<c[3];
+				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1]<<" "<<w_g[2]<<" "<<w_g[3];
 			}
-			else if (n==5)
+			else if (w_a==5)
 			{
 				system("cls");
 				cout<<"=========="<<endl;
@@ -120,9 +143,9 @@ class words{
 				cout<<"    |";
 		    	cout<<"\n\n\n\n";
 				cout<<combo;
-				cout<<endl<<"Invalid letters: "<<c[0]<<" "<<c[1]<<" "<<c[2]<<" "<<c[3]<<" "<<c[4];
+				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1]<<" "<<w_g[2]<<" "<<w_g[3]<<" "<<w_g[4];
 			}
-			else if (n==6)
+			else if (w_a==6)
 			{
 				system("cls");
 				cout<<"=========="<<endl;
@@ -133,9 +156,9 @@ class words{
 				cout<<"    |";
 		    	cout<<"\n\n\n\n";
 				cout<<combo;
-				cout<<endl<<"Invalid letters: "<<c[0]<<" "<<c[1]<<" "<<c[2]<<" "<<c[3]<<" "<<c[4]<<" "<<c[5];
+				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1]<<" "<<w_g[2]<<" "<<w_g[3]<<" "<<w_g[4]<<" "<<w_g[5];
 			}
-			else if (n==7)
+			else if (w_a==7)
 			{
 				system("cls");
 				cout<<"=========="<<endl;
@@ -147,9 +170,9 @@ class words{
 				cout<<"   /"<<endl;
 		    	cout<<"\n\n\n";
 				cout<<combo;
-				cout<<endl<<"Invalid letters: "<<c[0]<<" "<<c[1]<<" "<<c[2]<<" "<<c[3]<<" "<<c[4]<<" "<<c[5]<<" "<<c[6];
+				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1]<<" "<<w_g[2]<<" "<<w_g[3]<<" "<<w_g[4]<<" "<<w_g[5]<<" "<<w_g[6];
 			}
-			else if (n==8)
+			else if (w_a==8)
 			{
 				system("cls");
 				cout<<"=========="<<endl;
@@ -158,10 +181,10 @@ class words{
 				cout<<"    O"<<endl;
 				cout<<"   /|\\"<<endl;
 				cout<<"    |"<<endl;
-				cout<<"   /\\"<<endl;
+				cout<<"   / \\"<<endl;
 		    	cout<<"\n\n\n";
 				cout<<combo;
-				cout<<endl<<"Invalid letters: "<<c[0]<<" "<<c[1]<<" "<<c[2]<<" "<<c[3]<<" "<<c[4]<<" "<<c[5]<<" "<<c[6]<<" "<<c[7];
+				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1]<<" "<<w_g[2]<<" "<<w_g[3]<<" "<<w_g[4]<<" "<<w_g[5]<<" "<<w_g[6]<<" "<<w_g[7];
 				cout<<endl<<endl<<"The word was: "<<word<<"!\n\nYou Lose";
 				exit(1);
 			}

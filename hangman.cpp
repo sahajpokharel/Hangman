@@ -32,37 +32,39 @@ class words{
 		void play_game()
 		{
 			char letter, letters_and_blanks[word.length()], wrong_guesses[8];
-			int wrong_attempts=0;
-			bool complete=false;
-			for(int j=0; j<word.length(); j++)
-			letters_and_blanks[j]='_';
-			cout<<word;
-			Sleep(2000);
+			int wrong_attempts=0,blanks=word.length(),i;
+			bool complete=false,wrong_letter=false;
+			for(i=0; i<word.length(); i++)
+			letters_and_blanks[i]='_';
+//			cout<<word;
+//			Sleep(2000);
 			while(1)
 			{
 				display_hangman(wrong_attempts,letters_and_blanks,wrong_guesses);
 				cout<<endl<<endl<<"Enter letter: ";
 				cin>>letter;
-				for(int j=0; j<word.length(); j++)
+				int new_blanks=blanks;
+				for(i=0; i<word.length(); i++)
 				{
-					if(word[j]==toupper(letter))
+					if(word[i]==toupper(letter))
 					{
-						letters_and_blanks[j]=toupper(letter);
-					}
-					else
-					{
-						continue;
-						if(j==word.length())
-						{
-							wrong_guesses[wrong_attempts]=letter;
-							wrong_attempts++;
-							break;
-						}
+						letters_and_blanks[i]=toupper(letter);
+						blanks--;
 					}
 				}
-				for(int j=0; j<word.length(); j++)
+				if(new_blanks==blanks)
 				{
-					if(letters_and_blanks[j]=='_')
+					for(i=0; wrong_guesses[i]!='\0'; i++)
+					if(wrong_guesses[i]==letter)
+					goto blanks_continue_label;
+					wrong_guesses[wrong_attempts]=letter;
+					wrong_attempts++;
+					blanks_continue_label:
+					continue;
+				}
+				for(i=0; i<word.length(); i++)
+				{
+					if(letters_and_blanks[i]=='_')
 					{
 						complete=false;
 						break;
@@ -72,13 +74,13 @@ class words{
 						complete=true;
 					}
 				}
-				if(!complete)
-				continue;
-				else
-				{
-					cout<<endl<<endl<<"CORRECT!\n\nYou Win";
-					break;
-				}
+				if(complete)
+				break;
+			}
+			if(complete)
+			{
+				display_hangman(wrong_attempts,letters_and_blanks,wrong_guesses);
+				cout<<endl<<endl<<"CORRECT!\n\nYou Win";
 			}
 		}
 		void display_hangman(int w_a, string combo, char w_g[])

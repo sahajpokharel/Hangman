@@ -2,17 +2,24 @@
 #include <ctime>
 #include <cstdlib>
 #include <fstream>
+#include <conio.h>
 #include <windows.h>
 
 using namespace std;
 
+int main();
+
 class words{
+	
 	string word;
+	
 	public:
+		
 		words()
 		{
 			srand(time(0));
-			int word_position = 1 + (rand() % 100);
+			int word_index = 1 + (rand() % 150);
+			
 			ifstream wordfile;
 			wordfile.open("words.txt");
 			if(!wordfile.is_open())
@@ -20,110 +27,132 @@ class words{
 				cout<<"Sorry, unable to generate a word."<<endl;
 				exit(1);
 			}
-		    int current_line = 0;
-		    while (getline(wordfile, word)) 
+		    
+			int current_line = 0;
+		    
+			while (getline(wordfile, word)) 
 			{
 		    	current_line++;
-		        if (current_line == word_position)
+		        if (current_line == word_index)
 		        break;
 		    }
-		    wordfile.close();
+		    
+			wordfile.close();
 		}
+		
 		void play_game()
 		{
 			char letter, letters_and_blanks[word.length()], wrong_guesses[8];
-			int wrong_attempts=0,blanks=word.length(),i;
-			bool complete=false,wrong_letter=false;
-			for(i=0; i<word.length(); i++)
-			letters_and_blanks[i]='_';
-//			cout<<word;
-//			Sleep(2000);
+			int wrong_attempts = 0, blanks = word.length(), i = 0;
+			bool complete = false;
+			
+			for(i = 0; i < word.length(); i++)
+			letters_and_blanks[i] = '_';
+			
 			while(1)
 			{
-				display_hangman(wrong_attempts,letters_and_blanks,wrong_guesses);
+				display_hangman(wrong_attempts, letters_and_blanks, wrong_guesses);
 				cout<<endl<<endl<<"Enter letter: ";
 				cin>>letter;
-				int new_blanks=blanks;
-				for(i=0; i<word.length(); i++)
+				
+				int new_blanks = blanks;
+				
+				for(i = 0; i < word.length(); i++)
 				{
-					if(word[i]==toupper(letter))
+					if(word[i] == toupper(letter))
 					{
-						letters_and_blanks[i]=toupper(letter);
+						letters_and_blanks[i] = toupper(letter);
 						blanks--;
 					}
 				}
-				if(new_blanks==blanks)
+				
+				if(new_blanks == blanks)
 				{
-					for(i=0; wrong_guesses[i]!='\0'; i++)
-					if(wrong_guesses[i]==letter)
+					for(i = 0; wrong_guesses[i] != '\0'; i++)
+					if(wrong_guesses[i] == letter)
 					goto blanks_continue_label;
-					wrong_guesses[wrong_attempts]=letter;
+					
+					wrong_guesses[wrong_attempts] = letter;
 					wrong_attempts++;
+					
 					blanks_continue_label:
 					continue;
 				}
-				for(i=0; i<word.length(); i++)
+				
+				for(i = 0; i < word.length(); i++)
 				{
-					if(letters_and_blanks[i]=='_')
+					if(letters_and_blanks[i] == '_')
 					{
-						complete=false;
+						complete = false;
 						break;
 					}
 					else
 					{
-						complete=true;
+						complete = true;
 					}
 				}
+				
 				if(complete)
 				break;
 			}
+			
 			if(complete)
 			{
-				display_hangman(wrong_attempts,letters_and_blanks,wrong_guesses);
+				display_hangman(wrong_attempts, letters_and_blanks, wrong_guesses);
 				cout<<endl<<endl<<"CORRECT!\n\nYou Win";
+				end_game();
 			}
 		}
-		void display_hangman(int w_a, string combo, char w_g[])
+		
+		void display_hangman(int wrong_attempts, string letters_and_blanks, char wrong_guesses[])
 		{
-			if (w_a==0)
+			if (wrong_attempts == 0)
 			{
 				system("cls");
 				cout<<"\n\n\n\n\n\n\n\n\n\n";
-				cout<<combo;
+				cout<<letters_and_blanks;
 				cout<<endl<<endl<<"Invalid letters: ";
 			}
-			else if (w_a==1)
+			
+			else if (wrong_attempts == 1)
 			{
 				system("cls");
+				
 				cout<<"=========="<<endl;
 		    	cout<<"\n\n\n\n\n\n\n\n\n";
-				cout<<combo;
-				cout<<endl<<endl<<"Invalid letters: "<<w_g[0];
+				cout<<letters_and_blanks;
+				cout<<endl<<endl<<"Invalid letters: "<<wrong_guesses[0];
 			}
-			else if (w_a==2)
+			
+			else if (wrong_attempts == 2)
 			{
 				system("cls");
+				
 				cout<<"=========="<<endl;
 				cout<<"    |"<<endl;
 		    	cout<<"    |"<<endl;
 		    	cout<<"\n\n\n\n\n\n\n";
-				cout<<combo;
-				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1];
+				cout<<letters_and_blanks;
+				cout<<endl<<endl<<"Invalid letters: "<<wrong_guesses[0]<<" "<<wrong_guesses[1];
 			}
-			else if (w_a==3)
+			
+			else if (wrong_attempts == 3)
 			{
 				system("cls");
+				
 				cout<<"=========="<<endl;
 				cout<<"    |"<<endl;
 		    	cout<<"    |"<<endl;
 				cout<<"    O"<<endl;
 		    	cout<<"\n\n\n\n\n\n";
-				cout<<combo;
-				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1]<<" "<<w_g[2];
+				cout<<letters_and_blanks;
+				cout<<endl<<endl<<"Invalid letters: "<<wrong_guesses[0]<<" "<<wrong_guesses[1]<<" "<<wrong_guesses[2];
 			}
-		    else if (w_a==4)
+		    
+			else if (wrong_attempts == 4)
 		    {
 		    	system("cls");
+				
 				cout<<"=========="<<endl;
 				cout<<"    |"<<endl;
 		    	cout<<"    |"<<endl;
@@ -131,12 +160,14 @@ class words{
 				cout<<"    |"<<endl;
 				cout<<"    |";
 		    	cout<<"\n\n\n\n";
-				cout<<combo;
-				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1]<<" "<<w_g[2]<<" "<<w_g[3];
+				cout<<letters_and_blanks;
+				cout<<endl<<endl<<"Invalid letters: "<<wrong_guesses[0]<<" "<<wrong_guesses[1]<<" "<<wrong_guesses[2]<<" "<<wrong_guesses[3];
 			}
-			else if (w_a==5)
+			
+			else if (wrong_attempts == 5)
 			{
 				system("cls");
+				
 				cout<<"=========="<<endl;
 				cout<<"    |"<<endl;
 		    	cout<<"    |"<<endl;
@@ -144,12 +175,14 @@ class words{
 				cout<<"   /|"<<endl;
 				cout<<"    |";
 		    	cout<<"\n\n\n\n";
-				cout<<combo;
-				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1]<<" "<<w_g[2]<<" "<<w_g[3]<<" "<<w_g[4];
+				cout<<letters_and_blanks;
+				cout<<endl<<endl<<"Invalid letters: "<<wrong_guesses[0]<<" "<<wrong_guesses[1]<<" "<<wrong_guesses[2]<<" "<<wrong_guesses[3]<<" "<<wrong_guesses[4];
 			}
-			else if (w_a==6)
+			
+			else if (wrong_attempts == 6)
 			{
 				system("cls");
+				
 				cout<<"=========="<<endl;
 				cout<<"    |"<<endl;
 		    	cout<<"    |"<<endl;
@@ -157,12 +190,14 @@ class words{
 				cout<<"   /|\\"<<endl;
 				cout<<"    |";
 		    	cout<<"\n\n\n\n";
-				cout<<combo;
-				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1]<<" "<<w_g[2]<<" "<<w_g[3]<<" "<<w_g[4]<<" "<<w_g[5];
+				cout<<letters_and_blanks;
+				cout<<endl<<endl<<"Invalid letters: "<<wrong_guesses[0]<<" "<<wrong_guesses[1]<<" "<<wrong_guesses[2]<<" "<<wrong_guesses[3]<<" "<<wrong_guesses[4]<<" "<<wrong_guesses[5];
 			}
-			else if (w_a==7)
+			
+			else if (wrong_attempts == 7)
 			{
 				system("cls");
+				
 				cout<<"=========="<<endl;
 				cout<<"    |"<<endl;
 		    	cout<<"    |"<<endl;
@@ -171,12 +206,14 @@ class words{
 				cout<<"    |"<<endl;
 				cout<<"   /"<<endl;
 		    	cout<<"\n\n\n";
-				cout<<combo;
-				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1]<<" "<<w_g[2]<<" "<<w_g[3]<<" "<<w_g[4]<<" "<<w_g[5]<<" "<<w_g[6];
+				cout<<letters_and_blanks;
+				cout<<endl<<endl<<"Invalid letters: "<<wrong_guesses[0]<<" "<<wrong_guesses[1]<<" "<<wrong_guesses[2]<<" "<<wrong_guesses[3]<<" "<<wrong_guesses[4]<<" "<<wrong_guesses[5]<<" "<<wrong_guesses[6];
 			}
-			else if (w_a==8)
+			
+			else if (wrong_attempts == 8)
 			{
 				system("cls");
+				
 				cout<<"=========="<<endl;
 				cout<<"    |"<<endl;
 		    	cout<<"    |"<<endl;
@@ -185,13 +222,42 @@ class words{
 				cout<<"    |"<<endl;
 				cout<<"   / \\"<<endl;
 		    	cout<<"\n\n\n";
-				cout<<combo;
-				cout<<endl<<endl<<"Invalid letters: "<<w_g[0]<<" "<<w_g[1]<<" "<<w_g[2]<<" "<<w_g[3]<<" "<<w_g[4]<<" "<<w_g[5]<<" "<<w_g[6]<<" "<<w_g[7];
+				cout<<letters_and_blanks;
+				cout<<endl<<endl<<"Invalid letters: "<<wrong_guesses[0]<<" "<<wrong_guesses[1]<<" "<<wrong_guesses[2]<<" "<<wrong_guesses[3]<<" "<<wrong_guesses[4]<<" "<<wrong_guesses[5]<<" "<<wrong_guesses[6]<<" "<<wrong_guesses[7];
 				cout<<endl<<endl<<"The word was: "<<word<<"!\n\nYou Lose";
-				exit(1);
+				
+				end_game();
 			}
 		}
+		void end_game()
+		{
+			char choice;
+			cout<<endl<<endl<<"[1] Play a new game\n[2] Exit the game";
+			
+			enter_choice:
+			choice = getch();
+			
+			if(choice == '1')
+			{
+				system("cls");
+				main();
+			}
+			
+			else if(choice == '2')
+			{
+				system("cls");
+				
+				cout<<endl<<endl<<"\t\t\tThanks for playing hangman\n\t\tVisit github.com/sahajpokharel for more games!";
+				
+				Sleep(2000);
+				exit(1);
+			}
+			
+			else
+			goto enter_choice;
+		}
 };
+
 int main()
 {
 	words w;

@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
@@ -44,16 +45,25 @@ class words{
 		{
 			char letter, letters_and_blanks[word.length()], wrong_guesses[8];
 			int wrong_attempts = 0, blanks = word.length(), i = 0;
-			bool complete = false;
+			bool complete;
 			
 			for(i = 0; i < word.length(); i++)
 			letters_and_blanks[i] = '_';
 			
 			while(1)
 			{
+				start_game:
 				display_hangman(wrong_attempts, letters_and_blanks, wrong_guesses);
 				cout<<endl<<endl<<"Enter letter: ";
+				
+				letter_input:
 				cin>>letter;
+				
+				if (toupper(letter) < 65 || toupper(letter) > 90)
+				{
+					system("cls");
+					goto start_game;
+				}
 				
 				int new_blanks = blanks;
 				
